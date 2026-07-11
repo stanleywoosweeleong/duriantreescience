@@ -353,7 +353,7 @@ footer{background:var(--surface-2);color:var(--ink-soft);padding:clamp(34px,6vw,
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 "use strict";
-const CACHE_VERSION = "v3.5.2";
+const CACHE_VERSION = "v3.5.3";
 
 /* ============================================================
    BOTANICAL PLATE LIBRARY  — inline SVG, copper linework
@@ -2532,8 +2532,8 @@ function wire(){
           <button class="bmitem__chap" data-jump="${bm.sec}">${chap} ›</button>
           <button class="bmitem__del" data-del="${bm.id}" aria-label="${isZh?"删除":"Delete"}" title="${isZh?"删除":"Delete"}">🗑</button>
         </div>
-        <textarea class="bmitem__q" data-quote="${bm.id}" spellcheck="false">${esc(bm.quote)}</textarea>
-        <textarea class="bmitem__note" data-note="${bm.id}" placeholder="${isZh?"写下你的想法…":"Your note…"}">${esc(bm.note||"")}</textarea>
+        <textarea class="bmitem__q" id="bmq_${bm.id}" name="bmq_${bm.id}" data-quote="${bm.id}" spellcheck="false" aria-label="${isZh?"引用文字（可编辑）":"Saved quote (editable)"}">${esc(bm.quote)}</textarea>
+        <textarea class="bmitem__note" id="bmn_${bm.id}" name="bmn_${bm.id}" data-note="${bm.id}" aria-label="${isZh?"我的笔记":"My note"}" placeholder="${isZh?"写下你的想法…":"Your note…"}">${esc(bm.note||"")}</textarea>
         <div class="bmitem__ts">${fmtTs(bm.ts)}</div>
       </div>`;
     }).join("");
