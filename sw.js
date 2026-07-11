@@ -1,6 +1,6 @@
 /* Durian Tree Science — service worker
    Offline-first single-file app. Bump VERSION on every deploy so clients update. */
-const VERSION = 'dts-v3.6.2';
+const VERSION = 'dts-v3.6.3';
 const SHELL = [
   './',
   './index.html',
