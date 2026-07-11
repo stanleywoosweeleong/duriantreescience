@@ -308,7 +308,7 @@ footer{background:var(--surface-2);color:var(--ink-soft);padding:clamp(34px,6vw,
 .maglens__x:hover{background:rgba(255,255,255,.4)}
 .maglens__view{position:absolute;top:24px;left:0;right:0;bottom:0;overflow:auto;-webkit-overflow-scrolling:touch;background:var(--bg)}
 .maglens__inner{min-height:100%}
-.maglens__reflow{padding:12px 14px}
+.maglens__reflow{padding:12px 14px;box-sizing:border-box}
 .maglens__reflow>.section,.maglens__reflow>.hero{padding:0!important;border:0!important;margin:0}
 .maglens__reflow .prose{max-width:none}
 .maglens__reflow .facts,.maglens__reflow .cvwrap,.maglens__reflow .note,.maglens__reflow .minicard{margin:0}
@@ -373,7 +373,7 @@ footer{background:var(--surface-2);color:var(--ink-soft);padding:clamp(34px,6vw,
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 "use strict";
-const CACHE_VERSION = "v3.6.3";
+const CACHE_VERSION = "v3.6.4";
 
 /* ============================================================
    BOTANICAL PLATE LIBRARY  — inline SVG, copper linework
@@ -2616,18 +2616,22 @@ function wire(){
     if(key === magKey) return;                 // same content → keep loupe scroll position
     magKey = key;
     magInner.innerHTML = "";
+    magInner.style.height = "";
     if(!root){ const h=mkEl("div","maglens__hint"); h.textContent=(L==="zh"?"移到正文上方即可放大":"Move over the text to magnify"); magInner.appendChild(h); return; }
     root.style.maxWidth = "none";
     const wrap = mkEl("div","maglens__reflow");
-    wrap.style.width = (viewW / MAGZ) + "px";   // reflow to this width, then…
-    wrap.style.zoom = String(MAGZ);             // …zoom up so it fills the lens (text wraps, nothing cropped)
+    wrap.style.width = (viewW / MAGZ) + "px";                 // reflow the block to this narrow width…
+    wrap.style.transformOrigin = "0 0";
+    wrap.style.transform = "scale(" + MAGZ + ")";             // …then scale it up 2.5× (Safari-reliable), text wraps, nothing cropped
     wrap.appendChild(root);
     magInner.appendChild(wrap);
+    magInner.style.width = viewW + "px";
+    magInner.style.height = (wrap.offsetHeight * MAGZ) + "px"; // give the scroll area the scaled height
     if(magView) magView.scrollTop = 0;
   }
   const magMeasure=()=>{ viewW = Lw; viewH = Lh - MAGBAR; };
   function positionLens(){ if(!magLens) return; magLens.style.left=Lx+"px"; magLens.style.top=Ly+"px"; magLens.style.width=Lw+"px"; magLens.style.height=Lh+"px"; magMeasure(); }
-  function reflowResize(){ const w = magInner && magInner.querySelector(".maglens__reflow"); if(w) w.style.width = (viewW / MAGZ) + "px"; }  // re-wrap current block to new width
+  function reflowResize(){ const w = magInner && magInner.querySelector(".maglens__reflow"); if(w){ w.style.width = (viewW / MAGZ) + "px"; magInner.style.width = viewW + "px"; magInner.style.height = (w.offsetHeight * MAGZ) + "px"; } }  // re-wrap + re-scale to new size
   const scheduleMag=()=>{ if(magTick) return; magTick=true; requestAnimationFrame(()=>{ magTick=false; updateMagContent(); }); };
   function magOpen(){
     Lw = Math.min(window.innerWidth - 16, 560);
